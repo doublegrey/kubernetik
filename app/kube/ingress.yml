@@ -12,5 +12,5 @@ spec:
         paths:
           - path: "/app"
             backend:
-              serviceName: kubernetik_svc
+              serviceName: kubernetik-svc
               servicePort: 80
