@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetik_svc
+  namespace: default
+spec:
+  selector:
+    app: kubernetik_app
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP

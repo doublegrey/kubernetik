@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kubernetik_app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kubernetik_app
+  template:
+    metadata:
+      labels:
+        app: kubernetik_app
+    spec:
+      containers:
+        - name: kubernetik_app
+          image: doublegrey/kubernetik_app:latest
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
