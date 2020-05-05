@@ -1,29 +1,49 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
+	"os"
+	"time"
+
+	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
-
-	fmt.Fprintf(w, "hello\n")
-}
-
-func headers(w http.ResponseWriter, req *http.Request) {
-	for name, headers := range req.Header {
-		for _, h := range headers {
-			fmt.Fprintf(w, "%v: %v\n", name, h)
-		}
-	}
-}
-
 func main() {
-	http.HandleFunc("/", headers)
-	http.HandleFunc("/hello", hello)
+	broker := os.Getenv("BROKER")
+	topic := os.Getenv("TOPIC")
 
-	err := http.ListenAndServe(":3000", nil)
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": broker})
+
 	if err != nil {
-		panic(err.Error())
+		log.Printf("Failed to create producer: %s\n", err)
+		os.Exit(1)
+	}
+
+	log.Printf("Created Producer %v\n", p)
+
+	for {
+		deliveryChan := make(chan kafka.Event)
+
+		value := "Hello from k8s"
+		err = p.Produce(&kafka.Message{
+			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+			Value:          []byte(value),
+			Headers:        []kafka.Header{{Key: "TestHeader", Value: []byte("header values are binary")}},
+		}, deliveryChan)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		e := <-deliveryChan
+		m := e.(*kafka.Message)
+
+		if m.TopicPartition.Error != nil {
+			log.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
+		} else {
+			log.Printf("Delivered message to topic %s [%d] at offset %v\n",
+				*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
+		}
+		close(deliveryChan)
+		time.Sleep(time.Second * 3)
 	}
 }

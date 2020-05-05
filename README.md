@@ -2,8 +2,6 @@
 
 ***(single control-plane cluster***)
 
----
-
 ## Install kubeadm (all nodes)
 
 ```bash
@@ -35,7 +33,7 @@ user@master:~$ kubectl apply -f https://docs.projectcalico.org/v3.11/manifests/c
 ## Join master node
 
 ```bash
-user@master:~$ sudo kubeadmin token list  # use this token
+user@master:~$ sudo kubeadm token list  # use this token
 user@master:~$ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | \ # get hash
    openssl dgst -sha256 -hex | sed 's/^.* //'
    
@@ -51,7 +49,7 @@ user@slave:~$ sudo kubeadm join {{MASTER_IP}}:6443 --token {{TOKEN}} \
 
 
 
----
+
 
 ## Configure kubectl on slave nodes
 
@@ -62,8 +60,6 @@ user@slave:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
 
-
----
 
 ## Install Web UI
 
@@ -92,8 +88,6 @@ OCTANT_ACCEPTED_HOSTS={EXTERNAL_IP} OCTANT_LISTENER_ADDR={SERVER_IP}:80 octant
 
 
 
----
-
 ## Install Helm
 
 ```bash
@@ -102,8 +96,7 @@ user@master:~$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/
 
 user@master:~$ chmod u+x get_helm-helm.sh
 user@master:~$ ./get_helm.sh
-user@master:~$ helm init
+user@master:~$ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+user@master:~$ helm repo update
 ```
-
----
 

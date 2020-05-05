@@ -15,8 +15,13 @@ spec:
       containers:
         - name: kubernetik-app
           image: doublegrey/kubernetik_app:latest
+          env:
+            - name: BROKER
+              value: "172.17.133.2:9092"
+            - name: TOPIC
+              value: "k8s"
           ports:
-            - containerPort: 3000
+            - containerPort: 9092
               protocol: TCP
           resources:
             requests:
