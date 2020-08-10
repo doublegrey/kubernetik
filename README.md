@@ -38,6 +38,7 @@ user@master:~$ sudo vim /etc/docker/daemon.json
 
 ## For the Raspberry Pi 4
 
+#### DO NOT FORGET TO REBOOT SYSTEM AFTER CHANGING CMDLINE.TXT
 Enable following options
 * cgroup_enable=cpuset
 * cgroup_enable=memory
@@ -47,6 +48,7 @@ Enable following options
 ```bash
 user@master:~$ sudo sed -i '$ s/$/ cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1/' /boot/firmware/cmdline.txt
 ```
+
 
 
 ## Initialise master node
