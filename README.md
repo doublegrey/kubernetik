@@ -15,6 +15,40 @@ user@master:~$ sudo apt-get install -y kubelet kubeadm kubectl
 user@master:~$ sudo apt-mark hold kubelet kubeadm kubectl
 ```
 
+## Install docker (all nodes)
+```bash
+user@master:~$ sudo apt install -y docker.io
+```
+
+## Enable cgroups
+```bash
+user@master:~$ sudo docker info
+user@master:~$ sudo vim /etc/docker/daemon.json
+```
+```json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+```
+
+## For the Raspberry Pi 4
+
+Enable following options
+* cgroup_enable=cpuset
+* cgroup_enable=memory
+* cgroup_memory=1
+* swapaccount=1
+
+```bash
+user@master:~$ sudo sed -i '$ s/$/ cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1/' /boot/firmware/cmdline.txt
+```
+
+
 ## Initialise master node
 
 ```bash
